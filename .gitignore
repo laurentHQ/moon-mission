@@ -19,5 +19,3 @@ node_modules/
 # Python virtual environment (if any)
 venv/
 __pycache__/
-*.py[cod]
-*$py.class 
