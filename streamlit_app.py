@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import re
 from bs4 import BeautifulSoup
+import urllib.parse
 
 # Set page configuration
 st.set_page_config(
@@ -53,6 +54,27 @@ st.markdown("""
         background-color: #1a237e;
         color: white;
         border-radius: 10px;
+    }
+    /* Make links work with Streamlit navigation */
+    a {
+        cursor: pointer;
+        text-decoration: none;
+        color: #1a237e;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    .view-details {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #1a237e;
+        color: white !important;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+    .view-details:hover {
+        background-color: #283593;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -117,10 +139,50 @@ def extract_footer(html_content):
         return footer
     return None
 
+# Function to modify links to work with Streamlit navigation
+def modify_links_for_streamlit(html_content, page_to_file):
+    soup = BeautifulSoup(html_content, 'html.parser')
+    
+    # Create a reverse mapping from file to page name
+    file_to_page = {v: k for k, v in page_to_file.items()}
+    
+    # Modify all links to use query parameters instead of direct file links
+    for a_tag in soup.find_all('a'):
+        href = a_tag.get('href')
+        if href and href.endswith('.html'):
+            # Get the page name for this file
+            page_name = file_to_page.get(href)
+            if page_name:
+                # Replace with a link that will be handled by Streamlit
+                a_tag['href'] = f"?page={urllib.parse.quote(page_name)}"
+                # Add a special class to identify these links
+                a_tag['class'] = a_tag.get('class', []) + ['streamlit-nav-link']
+                # Add onclick attribute to handle navigation within Streamlit
+                a_tag['onclick'] = f"window.location.href='?page={urllib.parse.quote(page_name)}'; return false;"
+    
+    return str(soup)
+
 # Main app layout
 def main():
     # Read the index.html file
     index_html = read_html_file('index.html')
+    
+    # Extract document cards to get page names and file mappings
+    document_cards = extract_document_cards(index_html)
+    page_to_file = {}
+    if document_cards:
+        for card in document_cards:
+            link = card.find('a')
+            if link and link.get('href') and link.text:
+                page_to_file[link.text] = link.get('href')
+    
+    # Add "Home" and "Mission Audio" to the mapping
+    page_to_file["Home"] = "index.html"
+    page_to_file["Mission Audio"] = "mission_audio.html"  # Virtual page
+    
+    # Get the current page from query parameters or default to Home
+    query_params = st.experimental_get_query_params()
+    current_page = query_params.get("page", ["Home"])[0]
     
     # Extract header content
     soup = BeautifulSoup(index_html, 'html.parser')
@@ -132,26 +194,19 @@ def main():
     
     # Sidebar navigation
     st.sidebar.title("Navigation")
-    pages = ["Home", "Mission Overview", "Timeline & Visualization", "Technical Specifications", 
-             "Crew Training", "Scientific Objectives", "Risk Assessment", "Budget & Resources",
-             "Mission Audio"]
+    pages = ["Home"] + list(page_to_file.keys())
+    pages = list(dict.fromkeys(pages))  # Remove duplicates while preserving order
     
-    # Extract document cards to get actual page names
-    document_cards = extract_document_cards(index_html)
-    if document_cards:
-        pages = ["Home"]
-        for card in document_cards:
-            link = card.find('a')
-            if link and link.get('href') and link.text:
-                page_name = link.text
-                if page_name not in pages:
-                    pages.append(page_name)
-        pages.append("Mission Audio")
+    # Use the current page from query params for the radio button
+    selected_page = st.sidebar.radio("Select a page:", pages, index=pages.index(current_page) if current_page in pages else 0)
     
-    page = st.sidebar.radio("Select a page:", pages)
+    # Update query parameters if page changed via sidebar
+    if selected_page != current_page:
+        st.experimental_set_query_params(page=selected_page)
+        current_page = selected_page
     
     # Home page
-    if page == "Home":
+    if current_page == "Home":
         st.markdown('<h2>Welcome to the Moon Mission Documentation</h2>', unsafe_allow_html=True)
         
         # Extract and display document cards in a 2-column layout
@@ -163,17 +218,21 @@ def main():
             
             with col1:
                 for card in document_cards[:mid_point]:
-                    st.markdown(f'<div class="card">{card.decode_contents()}</div>', unsafe_allow_html=True)
+                    # Modify links in the card to work with Streamlit navigation
+                    modified_card = modify_links_for_streamlit(str(card), page_to_file)
+                    st.markdown(f'<div class="card">{modified_card}</div>', unsafe_allow_html=True)
             
             with col2:
                 for card in document_cards[mid_point:]:
-                    st.markdown(f'<div class="card">{card.decode_contents()}</div>', unsafe_allow_html=True)
+                    # Modify links in the card to work with Streamlit navigation
+                    modified_card = modify_links_for_streamlit(str(card), page_to_file)
+                    st.markdown(f'<div class="card">{modified_card}</div>', unsafe_allow_html=True)
                 
                 # Add Mission Audio card if not already in the document cards
                 if not any("Mission Audio" in card.text for card in document_cards):
                     st.markdown('''
                     <div class="card">
-                        <h3>Mission Audio</h3>
+                        <h3><a href="?page=Mission%20Audio" onclick="window.location.href='?page=Mission%20Audio'; return false;">Mission Audio</a></h3>
                         <p>Audio recordings from different mission phases.</p>
                         <ul>
                             <li>Launch audio</li>
@@ -181,6 +240,7 @@ def main():
                             <li>Lunar landing</li>
                             <li>Ascent and return</li>
                         </ul>
+                        <a href="?page=Mission%20Audio" onclick="window.location.href='?page=Mission%20Audio'; return false;" class="view-details">View Details →</a>
                     </div>
                     ''', unsafe_allow_html=True)
         else:
@@ -191,15 +251,19 @@ def main():
         # Extract and display timeline
         timeline = extract_timeline(index_html)
         if timeline:
-            st.markdown(f'<div class="card">{timeline.decode_contents()}</div>', unsafe_allow_html=True)
+            # Modify links in the timeline to work with Streamlit navigation
+            modified_timeline = modify_links_for_streamlit(str(timeline), page_to_file)
+            st.markdown(f'<div class="card">{modified_timeline}</div>', unsafe_allow_html=True)
         
         # Extract and display footer
         footer = extract_footer(index_html)
         if footer:
-            st.markdown(f'<div class="footer">{footer.decode_contents()}</div>', unsafe_allow_html=True)
+            # Modify links in the footer to work with Streamlit navigation
+            modified_footer = modify_links_for_streamlit(str(footer), page_to_file)
+            st.markdown(f'<div class="footer">{modified_footer}</div>', unsafe_allow_html=True)
     
     # Mission Audio page
-    elif page == "Mission Audio":
+    elif current_page == "Mission Audio":
         st.markdown('<h2>Mission Audio Files</h2>', unsafe_allow_html=True)
         st.markdown('<p>Listen to audio recordings from different phases of the mission.</p>', unsafe_allow_html=True)
         
@@ -217,29 +281,22 @@ def main():
     
     # Other content pages - load from corresponding HTML files
     else:
-        # Map page names to HTML files
-        page_to_file = {}
-        for card in document_cards:
-            link = card.find('a')
-            if link and link.get('href') and link.text:
-                page_to_file[link.text] = link.get('href')
-        
-        if page in page_to_file:
-            html_file = page_to_file[page]
+        if current_page in page_to_file:
+            html_file = page_to_file[current_page]
             html_content = read_html_file(html_file)
             
             # Extract the main content
             soup = BeautifulSoup(html_content, 'html.parser')
             
             # Display the title
-            st.markdown(f'<h2>{page}</h2>', unsafe_allow_html=True)
+            st.markdown(f'<h2>{current_page}</h2>', unsafe_allow_html=True)
             
             # Find and display content sections
             content_container = soup.find(class_='content-container')
             if content_container:
-                sections = content_container.find_all(class_='section')
-                for section in sections:
-                    st.markdown(f'<div class="card">{section.decode_contents()}</div>', unsafe_allow_html=True)
+                # Modify links in the content to work with Streamlit navigation
+                modified_content = modify_links_for_streamlit(str(content_container), page_to_file)
+                st.markdown(f'<div class="card">{modified_content}</div>', unsafe_allow_html=True)
             else:
                 # If no sections found, display the whole body content
                 body = soup.body
@@ -253,11 +310,28 @@ def main():
                     if back_button:
                         back_button.decompose()
                     
-                    st.markdown(f'<div class="card">{body.decode_contents()}</div>', unsafe_allow_html=True)
+                    # Modify links in the body to work with Streamlit navigation
+                    modified_body = modify_links_for_streamlit(str(body), page_to_file)
+                    st.markdown(f'<div class="card">{modified_body}</div>', unsafe_allow_html=True)
                 else:
                     st.warning(f"Could not extract content from {html_file}")
         else:
-            st.warning(f"No HTML file found for {page}")
+            st.warning(f"No HTML file found for {current_page}")
+
+# Add JavaScript to handle link clicks
+st.markdown("""
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to all navigation links
+    document.querySelectorAll('.streamlit-nav-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = this.getAttribute('href');
+        });
+    });
+});
+</script>
+""", unsafe_allow_html=True)
 
 # Run the app
 if __name__ == "__main__":
