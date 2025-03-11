@@ -181,8 +181,7 @@ def main():
     page_to_file["Mission Audio"] = "mission_audio.html"  # Virtual page
     
     # Get the current page from query parameters or default to Home
-    query_params = st.experimental_get_query_params()
-    current_page = query_params.get("page", ["Home"])[0]
+    current_page = st.query_params.get("page", "Home")
     
     # Extract header content
     soup = BeautifulSoup(index_html, 'html.parser')
@@ -202,7 +201,7 @@ def main():
     
     # Update query parameters if page changed via sidebar
     if selected_page != current_page:
-        st.experimental_set_query_params(page=selected_page)
+        st.query_params["page"] = selected_page
         current_page = selected_page
     
     # Home page
