@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Moon Mission Animation</title>
+    <style>
+        body { margin: 0; background: #000; font-family: Arial, sans-serif; color: #fff; }
+        #container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            border: 2px solid #333;
+            overflow: hidden;
+        }
+        canvas { display: block; }
+        #ui {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        #statusBar {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            width: 300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            padding: 3px 6px;
+            margin: 2px;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        button:hover { background: #666; }
+        #progressBar {
+            width: 200px;
+            height: 10px;
+            background: #222;
+            border: 1px solid #444;
+            margin-top: 5px;
+            position: relative;
+        }
+        #progressFill {
+            height: 100%;
+            background: #00ffff;
+            width: 0%;
+        }
+        #phaseLabels {
+            position: absolute;
+            top: -15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+        }
+        #statusInfo { display: flex; flex-direction: column; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="ui">
+            <button onclick="startEndToEnd()">Start Mission</button>
+        </div>
+        <div id="statusBar">
+            <div id="statusInfo">
+                <div id="status">Status: Ready</div>
+                <div id="missionClock">Time: 00:00</div>
+            </div>
+            <div id="progressBar">
+                <div id="progressFill"></div>
+                <div id="phaseLabels">
+                    <span>Transit</span>
+                    <span>Orbit</span>
+                    <span>Landing</span>
+                    <span>Return</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements (replace src with actual files in a live environment) -->
+    <audio id="launchSound" src="launch.wav"></audio>
+    <audio id="orbitSound" src="orbit.wav"></audio>
+    <audio id="landingSound" src="landing.wav"></audio>
+    <audio id="ascentSound" src="ascent.wav"></audio>
+    <audio id="completeSound" src="complete.wav"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 800 / 600, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(800, 600);
+        document.getElementById('container').appendChild(renderer.domElement);
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0x404040));
+        const sunLight = new THREE.PointLight(0xffffff, 1, 100);
+        sunLight.position.set(50, 50, 50);
+        scene.add(sunLight);
+
+        // Stars
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 1000;
+        const starPositions = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount * 3; i++) starPositions[i] = (Math.random() - 0.5) * 200;
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 }));
+        scene.add(stars);
+
+        // Earth
+        const earth = new THREE.Mesh(
+            new THREE.SphereGeometry(5, 32, 32),
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg') })
+        );
+        earth.position.set(0, 0, 0);
+        scene.add(earth);
+
+        // Moon
+        const moonRadius = 2;
+        const moon = new THREE.Mesh(
+            new THREE.SphereGeometry(moonRadius, 32, 32),
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/moon_1024.jpg') })
+        );
+        const moonOrbitRadius = 20;
+        let moonOrbitAngle = Math.PI;
+        scene.add(moon);
+
+        // Lunar Surface (Higher resolution for detail)
+        const lunarSurface = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 10, 64, 64),
+            new THREE.MeshPhongMaterial({ 
+                map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/moon_1024.jpg'),
+                bumpMap: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/moon_1024.jpg'),
+                bumpScale: 0.2,
+                opacity: 0.9,
+                transparent: true
+            })
+        );
+        lunarSurface.rotation.x = -Math.PI / 2;
+        lunarSurface.position.y = -moonRadius;
+        lunarSurface.visible = false;
+        scene.add(lunarSurface);
+
+        // Spacecraft
+        const spacecraftGroup = new THREE.Group();
+        const body = new THREE.Mesh(
+            new THREE.ConeGeometry(0.5, 2, 32),
+            new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 100 })
+        );
+        body.rotation.x = Math.PI / 2;
+        spacecraftGroup.add(body);
+        for (let i = 0; i < 4; i++) {
+            const fin = new THREE.Mesh(
+                new THREE.BoxGeometry(0.1, 1, 0.5),
+                new THREE.MeshPhongMaterial({ color: 0x00ffff })
+            );
+            fin.position.set(0, -1, 0.5);
+            fin.rotation.z = (i * Math.PI) / 2;
+            spacecraftGroup.add(fin);
+        }
+        spacecraftGroup.position.set(0, 0, 0);
+        scene.add(spacecraftGroup);
+
+        // Projected Path (Straight Lines)
+        const pathMaterial = new THREE.LineDashedMaterial({ color: 0x00ffff, dashSize: 0.5, gapSize: 0.5 });
+        const pathGeometry = new THREE.BufferGeometry();
+        const pathPositions = new Float32Array(100 * 3);
+        pathGeometry.setAttribute('position', new THREE.BufferAttribute(pathPositions, 3));
+        const pathLine = new THREE.Line(pathGeometry, pathMaterial);
+        pathLine.computeLineDistances();
+        scene.add(pathLine);
+
+        // Orbital Path (Elliptical at Equatorial Plane)
+        const semiMajorAxis = 4;
+        const semiMinorAxis = 3;
+        const orbitCurve = new THREE.EllipseCurve(
+            0, 0,
+            semiMajorAxis, semiMinorAxis,
+            0, 2 * Math.PI,
+            false,
+            0
+        );
+        const orbitPoints = orbitCurve.getPoints(100);
+        const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+        const orbitLine = new THREE.Line(orbitGeometry, new THREE.LineDashedMaterial({ color: 0x00ffff, dashSize: 0.5, gapSize: 0.5 }));
+        orbitLine.computeLineDistances();
+        orbitLine.visible = false;
+        scene.add(orbitLine);
+
+        // Spotlight for landing (defined after spacecraftGroup)
+        const landingSpotlight = new THREE.SpotLight(0xffffff, 2, 50, Math.PI / 6, 0.5, 1);
+        landingSpotlight.position.set(0, 10, 0);
+        landingSpotlight.visible = false; // Only visible during landing
+        scene.add(landingSpotlight);
+
+        // Camera
+        camera.position.set(0, 15, 35);
+
+        // Animation variables
+        let state = 'ready';
+        let missionStartTime = 0;
+        let currentTime = 0;
+        let returnStartTime = 0;
+        let orbitStartTime = 0;
+        let orbitProgress = 0;
+        let landingStartTime = 0;
+        const phaseDurations = {
+            transit: 3,
+            orbit: 8,
+            landing: 7, // Extended for slower descent
+            returning: 6
+        };
+        const totalDuration = phaseDurations.transit + phaseDurations.orbit + phaseDurations.landing + phaseDurations.returning;
+        const statusElement = document.getElementById('status');
+        const progressFill = document.getElementById('progressFill');
+        const missionClock = document.getElementById('missionClock');
+
+        // Audio elements
+        const launchSound = document.getElementById('launchSound');
+        const orbitSound = document.getElementById('orbitSound');
+        const landingSound = document.getElementById('landingSound');
+        const ascentSound = document.getElementById('ascentSound');
+        const completeSound = document.getElementById('completeSound');
+
+        // Animation control
+        function startEndToEnd() {
+            if (state === 'ready') {
+                state = 'transit';
+                missionStartTime = performance.now();
+                statusElement.textContent = 'Status: Transiting to Moon';
+                launchSound.play().catch(() => console.log('Launch sound not found'));
+            }
+        }
+
+        // Update straight path
+        function updateStraightPath(startX, startZ, endX, endZ, y) {
+            const positions = pathGeometry.attributes.position.array;
+            for (let i = 0; i < 100; i++) {
+                const t = i / 99;
+                positions[i * 3] = THREE.MathUtils.lerp(startX, endX, t);
+                positions[i * 3 + 1] = y;
+                positions[i * 3 + 2] = THREE.MathUtils.lerp(startZ, endZ, t);
+            }
+            pathGeometry.attributes.position.needsUpdate = true;
+        }
+
+        // Animation loop
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            // Moon orbit
+            moonOrbitAngle += 0.005;
+            if (moonOrbitAngle > 2 * Math.PI) moonOrbitAngle -= 2 * Math.PI;
+            moon.position.x = Math.cos(moonOrbitAngle) * moonOrbitRadius;
+            moon.position.z = Math.sin(moonOrbitAngle) * moonOrbitRadius;
+
+            lunarSurface.position.x = moon.position.x;
+            lunarSurface.position.z = moon.position.z;
+            orbitLine.position.x = moon.position.x;
+            orbitLine.position.z = moon.position.z;
+
+            if (state !== 'ready') {
+                currentTime = (performance.now() - missionStartTime) / 1000;
+                const cappedTime = Math.min(currentTime, totalDuration);
+                progressFill.style.width = `${(cappedTime / totalDuration) * 100}%`;
+
+                const minutes = Math.floor(currentTime / 60).toString().padStart(2, '0');
+                const seconds = Math.floor(currentTime % 60).toString().padStart(2, '0');
+                missionClock.textContent = `Time: ${minutes}:${seconds}`;
+
+                // Transit
+                if (state === 'transit' && currentTime <= phaseDurations.transit) {
+                    updateStraightPath(0, 0, moon.position.x, moon.position.z, 0);
+                    spacecraftGroup.position.x = THREE.MathUtils.lerp(0, moon.position.x, currentTime / phaseDurations.transit);
+                    spacecraftGroup.position.z = THREE.MathUtils.lerp(0, moon.position.z, currentTime / phaseDurations.transit);
+                    spacecraftGroup.position.y = 0;
+                } else if (state === 'transit' && currentTime > phaseDurations.transit) {
+                    state = 'orbit';
+                    orbitStartTime = performance.now();
+                    orbitProgress = 0;
+                    pathLine.visible = false;
+                    orbitLine.visible = true;
+                    statusElement.textContent = 'Status: In Lunar Orbit';
+                    orbitSound.play().catch(() => console.log('Orbit sound not found'));
+                }
+
+                // Orbit (Realistic at Equatorial Plane)
+                if (state === 'orbit' && currentTime <= phaseDurations.transit + phaseDurations.orbit) {
+                    const orbitElapsedTime = (performance.now() - orbitStartTime) / 1000;
+                    const orbitsPerPhase = 3;
+                    orbitProgress = (orbitElapsedTime / phaseDurations.orbit) * (2 * Math.PI * orbitsPerPhase);
+
+                    const r = (semiMajorAxis * semiMinorAxis) / Math.sqrt(
+                        (semiMinorAxis * Math.cos(orbitProgress)) ** 2 + (semiMajorAxis * Math.sin(orbitProgress)) ** 2
+                    );
+                    const x = r * Math.cos(orbitProgress);
+                    const z = r * Math.sin(orbitProgress);
+
+                    spacecraftGroup.position.x = moon.position.x + x;
+                    spacecraftGroup.position.z = moon.position.z + z;
+                    spacecraftGroup.position.y = moon.position.y;
+
+                    const nextProgress = orbitProgress + 0.01;
+                    const nextR = (semiMajorAxis * semiMinorAxis) / Math.sqrt(
+                        (semiMinorAxis * Math.cos(nextProgress)) ** 2 + (semiMajorAxis * Math.sin(nextProgress)) ** 2
+                    );
+                    const nextX = moon.position.x + nextR * Math.cos(nextProgress);
+                    const nextZ = moon.position.z + nextR * Math.sin(nextProgress);
+                    spacecraftGroup.lookAt(nextX, moon.position.y, nextZ);
+                } else if (state === 'orbit' && currentTime > phaseDurations.transit + phaseDurations.orbit) {
+                    state = 'landing';
+                    landingStartTime = performance.now();
+                    orbitLine.visible = false;
+                    pathLine.visible = true;
+                    lunarSurface.visible = true;
+                    landingSpotlight.visible = true; // Turn on spotlight
+                    landingSpotlight.target = spacecraftGroup; // Set target dynamically
+                    statusElement.textContent = 'Status: Landing on Moon';
+                    landingSound.play().catch(() => console.log('Landing sound not found'));
+                }
+
+                // Landing (Enhanced visibility)
+                if (state === 'landing' && currentTime <= phaseDurations.transit + phaseDurations.orbit + phaseDurations.landing) {
+                    updateStraightPath(moon.position.x, moon.position.z, moon.position.x, moon.position.z, -moonRadius - 0.5);
+                    const t = (currentTime - (phaseDurations.transit + phaseDurations.orbit)) / phaseDurations.landing;
+                    spacecraftGroup.position.y = THREE.MathUtils.lerp(moon.position.y, -moonRadius - 0.5, t);
+                    spacecraftGroup.position.x = moon.position.x;
+                    spacecraftGroup.position.z = moon.position.z;
+                    lunarSurface.position.y = -moonRadius;
+
+                    // Add subtle rotation to spacecraft during landing
+                    spacecraftGroup.rotation.x = THREE.MathUtils.lerp(0, Math.PI / 6, t);
+
+                    // Update spotlight position to follow spacecraft
+                    landingSpotlight.position.set(moon.position.x, moon.position.y + 10, moon.position.z);
+
+                    // Zoom camera toward landing site with offset for better view
+                    const landingElapsedTime = (performance.now() - landingStartTime) / 1000;
+                    const zoomT = landingElapsedTime / phaseDurations.landing;
+                    const startPos = new THREE.Vector3(moon.position.x, moon.position.y + 10, moon.position.z + 20);
+                    const endPos = new THREE.Vector3(moon.position.x + 3, -moonRadius + 1, moon.position.z + 3);
+                    camera.position.lerpVectors(startPos, endPos, zoomT);
+                    camera.lookAt(spacecraftGroup.position);
+                } else if (state === 'landing' && currentTime > phaseDurations.transit + phaseDurations.orbit + phaseDurations.landing) {
+                    state = 'returning';
+                    returnStartTime = performance.now();
+                    lunarSurface.visible = false;
+                    landingSpotlight.visible = false;
+                    statusElement.textContent = 'Status: Returning to Earth';
+                    ascentSound.play().catch(() => console.log('Ascent sound not found'));
+                }
+
+                // Returning
+                if (state === 'returning') {
+                    const returnElapsedTime = (performance.now() - returnStartTime) / 1000;
+                    if (returnElapsedTime <= phaseDurations.returning) {
+                        updateStraightPath(moon.position.x, moon.position.z, 0, 0, 0);
+                        const t = returnElapsedTime / phaseDurations.returning;
+                        spacecraftGroup.position.x = THREE.MathUtils.lerp(moon.position.x, 0, t);
+                        spacecraftGroup.position.z = THREE.MathUtils.lerp(moon.position.z, 0, t);
+                        spacecraftGroup.position.y = THREE.MathUtils.lerp(-moonRadius - 0.5, 0, t);
+                    } else {
+                        state = 'ready';
+                        statusElement.textContent = 'Status: Mission Complete';
+                        progressFill.style.width = '0%';
+                        missionClock.textContent = 'Time: 00:00';
+                        camera.position.set(0, 15, 35);
+                        camera.lookAt(0, 0, 0);
+                        pathLine.visible = false;
+                        completeSound.play().catch(() => console.log('Complete sound not found'));
+                    }
+                }
+            }
+
+            // Camera behavior (except during landing zoom)
+            if (state === 'transit' || state === 'returning') {
+                camera.position.lerp(spacecraftGroup.position.clone().add(new THREE.Vector3(0, 10, 20)), 0.05);
+                camera.lookAt(spacecraftGroup.position);
+            } else if (state === 'orbit') {
+                camera.position.set(moon.position.x, moon.position.y + 10, moon.position.z + 20);
+                camera.lookAt(moon.position);
+            }
+
+            // Rotate celestial bodies
+            earth.rotation.y += 0.01;
+            moon.rotation.y += 0.005;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

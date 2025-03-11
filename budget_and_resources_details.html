@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget and Resources - Moon Mission Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .content-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .header {
+            background-color: #1a237e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #1a237e;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1a237e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .back-button:hover {
+            background-color: #283593;
+        }
+        .budget-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .budget-overview {
+            text-align: center;
+            padding: 20px;
+            background-color: #e8eaf6;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .total-budget {
+            font-size: 2em;
+            color: #1a237e;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .budget-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .budget-card h3 {
+            color: #1a237e;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8eaf6;
+        }
+        .budget-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .budget-item:last-child {
+            border-bottom: none;
+        }
+        .amount {
+            font-weight: bold;
+            color: #283593;
+        }
+        .percentage-bar {
+            background-color: #e8eaf6;
+            height: 20px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+        .percentage-fill {
+            background-color: #1a237e;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .personnel-chart {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .personnel-category {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .personnel-number {
+            font-size: 1.5em;
+            color: #1a237e;
+            font-weight: bold;
+        }
+        .partnership-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .partner-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .partner-item {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            background-color: #e8eaf6;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← Back to Main Page</a>
+    <div class="header">
+        <h1>Budget and Resource Allocation Plan</h1>
+    </div>
+    <div class="content-container">
+        <div class="budget-overview">
+            <h2>Program Budget Overview</h2>
+            <div class="total-budget">$93 Billion</div>
+            <div>5-Year Program Duration</div>
+        </div>
+
+        <div class="budget-section">
+            <h2>Annual Budget Breakdown</h2>
+            <div class="budget-grid">
+                <div class="budget-card">
+                    <h3>Year 1: $22.5B</h3>
+                    <div class="budget-item">
+                        <span>Research and Development</span>
+                        <span class="amount">40%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 40%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Hardware Production</span>
+                        <span class="amount">35%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 35%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Testing</span>
+                        <span class="amount">15%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 15%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Program Management</span>
+                        <span class="amount">10%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <div class="budget-card">
+                    <h3>Year 2: $24.8B</h3>
+                    <div class="budget-item">
+                        <span>Hardware Production</span>
+                        <span class="amount">45%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 45%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Integration</span>
+                        <span class="amount">25%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 25%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Testing</span>
+                        <span class="amount">20%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 20%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Program Management</span>
+                        <span class="amount">10%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <div class="budget-card">
+                    <h3>Year 3: $19.2B</h3>
+                    <div class="budget-item">
+                        <span>Launch Operations</span>
+                        <span class="amount">40%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 40%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Mission Operations</span>
+                        <span class="amount">35%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 35%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Ground Support</span>
+                        <span class="amount">15%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 15%"></div>
+                    </div>
+                    <div class="budget-item">
+                        <span>Program Management</span>
+                        <span class="amount">10%</span>
+                    </div>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="budget-section">
+            <h2>Major Cost Centers</h2>
+            <div class="budget-grid">
+                <div class="budget-card">
+                    <h3>Launch Vehicle Development</h3>
+                    <div class="budget-item">
+                        <span>Total Budget</span>
+                        <span class="amount">$16B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Propulsion systems</span>
+                        <span class="amount">$6.2B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Structural systems</span>
+                        <span class="amount">$4.8B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Control systems</span>
+                        <span class="amount">$3.1B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Testing and validation</span>
+                        <span class="amount">$1.9B</span>
+                    </div>
+                </div>
+
+                <div class="budget-card">
+                    <h3>Spacecraft Development</h3>
+                    <div class="budget-item">
+                        <span>Total Budget</span>
+                        <span class="amount">$18B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Command module</span>
+                        <span class="amount">$7.3B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Service module</span>
+                        <span class="amount">$5.9B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Lunar lander</span>
+                        <span class="amount">$4.8B</span>
+                    </div>
+                </div>
+
+                <div class="budget-card">
+                    <h3>Ground Systems</h3>
+                    <div class="budget-item">
+                        <span>Total Budget</span>
+                        <span class="amount">$8.5B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Launch facilities</span>
+                        <span class="amount">$3.2B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Mission control</span>
+                        <span class="amount">$2.8B</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Communication network</span>
+                        <span class="amount">$2.5B</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="budget-section">
+            <h2>Personnel Resources</h2>
+            <div class="personnel-chart">
+                <div class="personnel-category">
+                    <div class="personnel-number">5,000</div>
+                    <div>Engineers</div>
+                </div>
+                <div class="personnel-category">
+                    <div class="personnel-number">2,000</div>
+                    <div>Scientists</div>
+                </div>
+                <div class="personnel-category">
+                    <div class="personnel-number">3,000</div>
+                    <div>Technicians</div>
+                </div>
+                <div class="personnel-category">
+                    <div class="personnel-number">1,500</div>
+                    <div>Support Staff</div>
+                </div>
+                <div class="personnel-category">
+                    <div class="personnel-number">1,000</div>
+                    <div>Management</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="budget-section">
+            <h2>International and Commercial Partnerships</h2>
+            <div class="partnership-section">
+                <h3>International Partners ($15B)</h3>
+                <div class="partner-list">
+                    <div class="partner-item">
+                        <div class="amount">$6.5B</div>
+                        <div>European Space Agency</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="amount">$3.8B</div>
+                        <div>JAXA</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="amount">$2.2B</div>
+                        <div>Canadian Space Agency</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="amount">$2.5B</div>
+                        <div>Other Partners</div>
+                    </div>
+                </div>
+            </div>
+            <div class="partnership-section">
+                <h3>Commercial Partnerships ($12B)</h3>
+                <div class="partner-list">
+                    <div class="partner-item">
+                        <div class="amount">$5.2B</div>
+                        <div>Launch Services</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="amount">$4.3B</div>
+                        <div>Hardware Development</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="amount">$2.5B</div>
+                        <div>Operations Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Assessment - Moon Mission Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .content-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .header {
+            background-color: #1a237e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #1a237e;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1a237e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .back-button:hover {
+            background-color: #283593;
+        }
+        .risk-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .risk-category {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .risk-title {
+            color: #283593;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e8eaf6;
+        }
+        .risk-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .risk-column {
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .risks {
+            background-color: #ffebee;
+        }
+        .mitigation {
+            background-color: #e8f5e9;
+        }
+        .contingency {
+            background-color: #e3f2fd;
+        }
+        .column-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .risks .column-title {
+            color: #c62828;
+        }
+        .mitigation .column-title {
+            color: #2e7d32;
+        }
+        .contingency .column-title {
+            color: #1565c0;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .risks li:before {
+            content: "⚠";
+            color: #c62828;
+            position: absolute;
+            left: 0;
+        }
+        .mitigation li:before {
+            content: "✓";
+            color: #2e7d32;
+            position: absolute;
+            left: 0;
+        }
+        .contingency li:before {
+            content: "⚡";
+            color: #1565c0;
+            position: absolute;
+            left: 0;
+        }
+        .emergency-protocols {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 6px;
+        }
+        .emergency-title {
+            color: #e65100;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← Back to Main Page</a>
+    <div class="header">
+        <h1>Risk Assessment and Contingency Plans</h1>
+    </div>
+    <div class="content-container">
+        <div class="risk-section">
+            <h2>1. LAUNCH PHASE RISKS</h2>
+            <div class="risk-category">
+                <div class="risk-title">Weather-Related Risks</div>
+                <div class="risk-group">
+                    <div class="risk-column risks">
+                        <div class="column-title">Risks</div>
+                        <ul>
+                            <li>Lightning strikes</li>
+                            <li>High winds</li>
+                            <li>Visibility issues</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column mitigation">
+                        <div class="column-title">Mitigation</div>
+                        <ul>
+                            <li>Multiple launch windows</li>
+                            <li>Advanced weather monitoring</li>
+                            <li>Lightning protection systems</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column contingency">
+                        <div class="column-title">Contingency</div>
+                        <ul>
+                            <li>Automated abort sequences</li>
+                            <li>Return-to-launch-site procedures</li>
+                            <li>Crew escape system activation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-section">
+            <h2>2. SPACECRAFT SYSTEMS RISKS</h2>
+            <div class="risk-category">
+                <div class="risk-title">Life Support Failures</div>
+                <div class="risk-group">
+                    <div class="risk-column risks">
+                        <div class="column-title">Risks</div>
+                        <ul>
+                            <li>Air circulation malfunction</li>
+                            <li>CO2 scrubber failure</li>
+                            <li>Temperature control issues</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column mitigation">
+                        <div class="column-title">Mitigation</div>
+                        <ul>
+                            <li>Redundant systems</li>
+                            <li>Regular maintenance checks</li>
+                            <li>Real-time monitoring</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column contingency">
+                        <div class="column-title">Contingency</div>
+                        <ul>
+                            <li>Backup life support activation</li>
+                            <li>Emergency oxygen supply</li>
+                            <li>Quick-return protocols</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="risk-category">
+                <div class="risk-title">Propulsion System Risks</div>
+                <div class="risk-group">
+                    <div class="risk-column risks">
+                        <div class="column-title">Risks</div>
+                        <ul>
+                            <li>Engine malfunction</li>
+                            <li>Fuel leak</li>
+                            <li>Thrust control issues</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column mitigation">
+                        <div class="column-title">Mitigation</div>
+                        <ul>
+                            <li>Multiple engine configuration</li>
+                            <li>Leak detection systems</li>
+                            <li>Redundant control systems</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column contingency">
+                        <div class="column-title">Contingency</div>
+                        <ul>
+                            <li>Engine shutdown procedures</li>
+                            <li>Alternative trajectory planning</li>
+                            <li>Emergency return protocols</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-section">
+            <h2>3. LUNAR LANDING RISKS</h2>
+            <div class="risk-category">
+                <div class="risk-title">Landing Site Hazards</div>
+                <div class="risk-group">
+                    <div class="risk-column risks">
+                        <div class="column-title">Risks</div>
+                        <ul>
+                            <li>Unexpected terrain</li>
+                            <li>Dust interference</li>
+                            <li>Communication issues</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column mitigation">
+                        <div class="column-title">Mitigation</div>
+                        <ul>
+                            <li>Multiple site surveys</li>
+                            <li>Advanced landing radar</li>
+                            <li>Redundant communication systems</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column contingency">
+                        <div class="column-title">Contingency</div>
+                        <ul>
+                            <li>Alternative landing sites</li>
+                            <li>Manual override capabilities</li>
+                            <li>Abort-to-orbit procedures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-section">
+            <h2>4. SURFACE OPERATION RISKS</h2>
+            <div class="risk-category">
+                <div class="risk-title">Environmental Hazards</div>
+                <div class="risk-group">
+                    <div class="risk-column risks">
+                        <div class="column-title">Risks</div>
+                        <ul>
+                            <li>Radiation exposure</li>
+                            <li>Micrometeoroid impacts</li>
+                            <li>Extreme temperatures</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column mitigation">
+                        <div class="column-title">Mitigation</div>
+                        <ul>
+                            <li>Radiation shielding</li>
+                            <li>Impact-resistant materials</li>
+                            <li>Thermal management systems</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column contingency">
+                        <div class="column-title">Contingency</div>
+                        <ul>
+                            <li>Emergency shelters</li>
+                            <li>Repair kits</li>
+                            <li>Medical treatment protocols</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-section">
+            <h2>8. EMERGENCY RESPONSE PROTOCOLS</h2>
+            <div class="emergency-protocols">
+                <div class="emergency-title">Immediate Response</div>
+                <ul>
+                    <li>Emergency assessment</li>
+                    <li>Crew safety procedures</li>
+                    <li>Mission control notification</li>
+                    <li>Resource conservation</li>
+                    <li>Damage control</li>
+                </ul>
+            </div>
+            <div class="emergency-protocols">
+                <div class="emergency-title">Long-term Response</div>
+                <ul>
+                    <li>Situation analysis</li>
+                    <li>Resource assessment</li>
+                    <li>Alternative mission planning</li>
+                    <li>Rescue coordination</li>
+                    <li>Family communication</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="risk-section">
+            <h2>9. RESCUE SCENARIOS</h2>
+            <div class="risk-category">
+                <div class="risk-group">
+                    <div class="risk-column risks">
+                        <div class="column-title">Launch Phase</div>
+                        <ul>
+                            <li>Launch pad evacuation</li>
+                            <li>In-flight abort</li>
+                            <li>Water landing procedures</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column mitigation">
+                        <div class="column-title">Lunar Surface</div>
+                        <ul>
+                            <li>Emergency ascent</li>
+                            <li>Surface rescue</li>
+                            <li>Extended stay protocols</li>
+                        </ul>
+                    </div>
+                    <div class="risk-column contingency">
+                        <div class="column-title">Return Phase</div>
+                        <ul>
+                            <li>Alternative landing sites</li>
+                            <li>Search and rescue coordination</li>
+                            <li>Medical evacuation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

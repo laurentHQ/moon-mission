@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon Mission Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .header {
+            background-color: #1a237e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .document-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .document-card h3 {
+            color: #1a237e;
+            margin-top: 0;
+        }
+        .document-card a {
+            color: #1a237e;
+            text-decoration: none;
+        }
+        .document-card a:hover {
+            text-decoration: underline;
+        }
+        .timeline {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .timeline h2 {
+            color: #1a237e;
+        }
+        .phase {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            border-left: 3px solid #1a237e;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #1a237e;
+            color: white;
+            border-radius: 10px;
+        }
+        .document-card a.view-details {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #1a237e;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .document-card a.view-details:hover {
+            background-color: #283593;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Moon Mission Documentation</h1>
+        <p>Comprehensive Planning and Implementation Guide</p>
+    </div>
+
+    <div class="document-grid">
+        <div class="document-card">
+            <h3><a href="mission_overview_details.html">Mission Overview</a></h3>
+            <p>High-level mission description, objectives, phases, and key components.</p>
+            <ul>
+                <li>Mission objectives</li>
+                <li>Mission phases</li>
+                <li>Key components</li>
+                <li>Crew requirements</li>
+            </ul>
+            <a href="mission_overview_details.html" class="view-details">View Details →</a>
+        </div>
+
+        <div class="document-card">
+            <h3><a href="timeline_and_milestones_details.html">Timeline & 3D Visualization</a></h3>
+            <p>Detailed mission timeline with interactive 3D visualization of mission phases.</p>
+            <ul>
+                <li>Complete mission timeline</li>
+                <li>Interactive 3D illustration</li>
+                <li>Key milestones</li>
+                <li>Project management details</li>
+            </ul>
+            <a href="timeline_and_milestones_details.html" class="view-details">View Details →</a>
+        </div>
+
+        <div class="document-card">
+            <h3><a href="technical_specifications_details.html">Technical Specifications</a></h3>
+            <p>Detailed technical requirements and specifications for all mission systems.</p>
+            <ul>
+                <li>Launch vehicle specs</li>
+                <li>Crew module details</li>
+                <li>Life support systems</li>
+                <li>Communication systems</li>
+            </ul>
+            <a href="technical_specifications_details.html" class="view-details">View Details →</a>
+        </div>
+
+        <div class="document-card">
+            <h3><a href="crew_training_details.html">Crew Training</a></h3>
+            <p>Comprehensive training protocols and requirements for mission personnel.</p>
+            <ul>
+                <li>Selection criteria</li>
+                <li>Training programs</li>
+                <li>Physical conditioning</li>
+                <li>Technical training</li>
+            </ul>
+            <a href="crew_training_details.html" class="view-details">View Details →</a>
+        </div>
+
+        <div class="document-card">
+            <h3><a href="scientific_objectives_details.html">Scientific Objectives</a></h3>
+            <p>Research goals, experiments, and data collection protocols.</p>
+            <ul>
+                <li>Research objectives</li>
+                <li>Experimental packages</li>
+                <li>Sample collection</li>
+                <li>Data management</li>
+            </ul>
+            <a href="scientific_objectives_details.html" class="view-details">View Details →</a>
+        </div>
+
+        <div class="document-card">
+            <h3><a href="risk_assessment_details.html">Risk Assessment</a></h3>
+            <p>Comprehensive analysis of mission risks and mitigation strategies.</p>
+            <ul>
+                <li>Launch risks</li>
+                <li>System risks</li>
+                <li>Crew safety</li>
+                <li>Emergency protocols</li>
+            </ul>
+            <a href="risk_assessment_details.html" class="view-details">View Details →</a>
+        </div>
+
+        <div class="document-card">
+            <h3><a href="budget_and_resources_details.html">Budget & Resources</a></h3>
+            <p>Financial planning and resource allocation details.</p>
+            <ul>
+                <li>Cost breakdown</li>
+                <li>Resource allocation</li>
+                <li>Funding sources</li>
+                <li>Budget tracking</li>
+            </ul>
+            <a href="budget_and_resources_details.html" class="view-details">View Details →</a>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <h2>Mission Timeline</h2>
+        <div class="phase">
+            <h3>Phase 1: Project Initiation (90 days)</h3>
+            <p>Team formation, initial design reviews, requirements definition</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 2: Preliminary Design (180 days)</h3>
+            <p>Component specifications, vendor selection, initial testing plans</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 3: Detailed Design (270 days)</h3>
+            <p>Complete system design, prototype development, test planning</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 4: Manufacturing & Integration (365 days)</h3>
+            <p>Hardware production, system assembly, initial testing</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 5: Testing & Validation (180 days)</h3>
+            <p>Full system testing, crew training, mission simulations</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 6: Launch Preparation (90 days)</h3>
+            <p>Final checks, launch site preparation, mission readiness review</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 7: Mission Execution (38 days)</h3>
+            <p>Launch, transit to Moon, lunar operations, return journey</p>
+        </div>
+        <div class="phase">
+            <h3>Phase 8: Post-Mission Analysis (180 days)</h3>
+            <p>Data analysis, mission report, future planning</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Total Mission Duration: 1,393 days (approximately 3.8 years)</p>
+        <p>For detailed information, please refer to the individual documentation files.</p>
+        <p><a href="timeline_and_milestones_details.html" style="color: white; text-decoration: underline;">View Complete Timeline Details</a></p>
+    </div>
+</body>
+</html>

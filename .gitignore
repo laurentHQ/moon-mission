@@ -1,0 +1,23 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE and editor folders
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+temp/
+*.tmp
+*.log
+
+# Node modules (if any)
+node_modules/
+
+# Python virtual environment (if any)
+venv/
+__pycache__/
+*.py[cod]
+*$py.class 
