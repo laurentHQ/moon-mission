@@ -5,4 +5,5 @@ plotly==5.18.0
 pillow==10.2.0
 matplotlib==3.8.2
 pydeck==0.8.0
-streamlit-extras==0.3.6 
+streamlit-extras==0.3.6
+beautifulsoup4==4.12.2 
